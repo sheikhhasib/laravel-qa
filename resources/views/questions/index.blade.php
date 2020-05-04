@@ -41,18 +41,18 @@
                                     <div class="row">
 
                                         <div class="pr-1">
-                                            @if (Auth::user()->can('update-question',$question))
+                                            @can ('update-question',$question)
                                                 <a href="{{ route('questions.edit',$question->id) }}" class="btn btn-sm btn-outline-info">Edit</a>
-                                            @endif
+                                            @endcan
                                         </div>
                                         <div>
-                                            @if (Auth::user()->can('delete-question',$question))
+                                            @can ('delete-question',$question)
                                                 <form class="form-delete" action="{{ route('questions.destroy',$question->id) }}" method="post">
                                                     @method('DELETE')
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure to delete ?')">Delete</button>
                                                 </form>
-                                            @endif
+                                            @endcan
                                         </div>
                                     </div>
                                 </div>

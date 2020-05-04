@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class QuestionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth',['except' => ['index','show']]);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +46,8 @@ class QuestionController extends Controller
      */
     public function store(AskQuestionRequest $request)
     {
-        dd('store');
+        $request->user()->questions()->create($request->only('title','body'));
+        return redirect()->route('questions.index')->with('success',"Success! your data inserted");
     }
 
     /**
@@ -63,10 +70,12 @@ class QuestionController extends Controller
      */
     public function edit(Question $question)
     {
-        if(\Gate::allows('update-question',$question)){
-            return view("questions.edit",compact('question'));
-        }
-        abort(403,"Access Denied");
+        $this->authorize("update",$question);
+        // if(\Gate::allows('update-question',$question)){
+        //     return view("questions.edit",compact('question'));
+        // }
+        // abort(403,"Access Denied");
+        return view("questions.edit",compact('question'));
     }
 
     /**
@@ -78,6 +87,7 @@ class QuestionController extends Controller
      */
     public function update(AskQuestionRequest $request, Question $question)
     {
+        $this->authorize("update",$question);
         $question->update($request->only('title','body'));
         return redirect('/questions')->with('success',"your questions has been updated");
     }
@@ -90,11 +100,14 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
-        if(\Gate::allows('delete-question',$question)){
-            $question->delete();
-        }
-        abort(403,"Access Denied");
+        $this->authorize("delete",$question);
+            // if(\Gate::allows('delete-question',$question)){
 
+            //     abort(403,"Access Denied");
+            // }
+            $question->delete();
+
+        // $question->delete();
         return redirect('/questions')->with('success','Your question has been deleted..!');
     }
 }
