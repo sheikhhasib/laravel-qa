@@ -36,7 +36,7 @@ class Question extends Model
     {
         return \Parsedown::instance()->text($this-body);
     }
-    public function answer(){
+    public function answers(){
         return $this->hasMany(Answer::class);
     }
 
